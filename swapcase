@@ -1,6 +1,6 @@
 #! /bin/bash
 #
-# swapcase 1.0.0, 2020-10-04
+# swapcase 1.0.1, 2020-10-04
 #
 # Invertiert die Groß- und Kleinschreibung, jeder Kleinbuchstabe wird
 # durch den entsprechenden Großbuchstaben ersetzt -- und umgekehrt.
@@ -10,17 +10,18 @@
 
 newStr=
 loopEnd="$(( ${#1} - 1 ))"
-for i in $(seq 0 $loopEnd); do
-    oldChar="${1:$i:1}"
-    if grep -c '[a-z]' <<< "$oldChar" &> /dev/null; then
+( LANG="de_DE.UTF-8" 
+for i in $(seq 0 "$loopEnd"); do
+    oldChar="${1:$i:1}"   ## der einzelne Buchstabe
+    if grep -c '[a-zäöüß]' <<< "$oldChar" &> /dev/null; then  	## Wenn es ein Kleinbuchstabe ist…
 		if [ "$oldChar" != "ß" ]; then
 			newStr+="$( tr '[a-zäöü]' '[A-ZÄÖÜ]' <<< "$oldChar" )"
 		else
 			newStr+="$( sed -E 's/ß/SS/' <<< "$oldChar" )"
 		fi
-	else
+	else							## Wenn es ein Grossbuchstabe ist…
 		newStr+="$( tr '[A-ZÄÖÜ]' '[a-zäöü]' <<< "$oldChar" )"
 	fi
-done
+done 
 
-echo "$newStr"
+echo "$newStr" )
